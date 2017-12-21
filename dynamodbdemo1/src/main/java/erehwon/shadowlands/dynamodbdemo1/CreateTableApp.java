@@ -1,4 +1,6 @@
 package erehwon.shadowlands.dynamodbdemo1;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,8 +28,14 @@ import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-
+import erehwon.shadowlands.dynamodbdemo1.model.*;
 
 
 public class CreateTableApp {
@@ -45,11 +53,10 @@ public class CreateTableApp {
 	             .build();
 
 	         DynamoDB dynamoDB = new DynamoDB(client);
-	         DynamoDBMapper dynamoDBMapper;
+	         DynamoDBMapper dynamoDBMapper  = new DynamoDBMapper(client);
 
 	         String tableName = "Movies";
 	         deleteTable(dynamoDB, tableName);
-
 
 	         try {
 	             System.out.println("Attempting to create table; please wait...");
@@ -86,6 +93,12 @@ public class CreateTableApp {
                  .withPrimaryKey(new PrimaryKey("year", 2015, "title", "The Big New Movie"));         
          deleteItem(dynamoDB, tableName, deleteItemSpec);
          readRow(dynamoDB, tableName);
+         String workingDir = System.getProperty("user.dir");
+  	   	 System.out.println("Current working directory : " + workingDir);
+  	     workingDir += File.separator + System.getProperty("sun.java.command") .substring(0, System.getProperty("sun.java.command").lastIndexOf(".")) .replace(".", File.separator);
+  	   	 System.out.println("Current class directory : " + workingDir);
+//         loadTable(dynamoDB, tableName);
+         loadTable(dynamoDBMapper);
 
 	}
 	
@@ -113,7 +126,28 @@ public class CreateTableApp {
         }
 	
     }
-    
+
+    private static void createRow(DynamoDBMapper dynamoDBMapper, MovieRecord movieRec) {
+
+        int year = movieRec.getYear().intValue();
+        String title = movieRec.getTitle();
+
+
+        try {
+            System.out.println("Adding a new item...");
+
+            dynamoDBMapper.save(movieRec);
+
+            System.out.println("PutItem succeeded:\n" +  year + ", :" + title +":");
+
+        }
+        catch (Exception e) {
+            System.err.println("Unable to add item: " + year + " " + title);
+            System.err.println(e.getMessage());
+        }
+
+    }
+
     private static void readRow(DynamoDB dynamoDB, String tableName) {
         int year = 2015;
         String title = "The Big New Movie";
@@ -250,6 +284,107 @@ public class CreateTableApp {
         }
     }
 
+    private static void loadTable(DynamoDB dynamoDB, String tableName) {
+
+        Table table = dynamoDB.getTable(tableName);
+
+        JsonParser parser;
+        JsonNode rootNode;
+        try {
+            String myCurrentDir = System.getProperty("user.dir") + File.separator + System.getProperty("sun.java.command") .substring(0, System.getProperty("sun.java.command").lastIndexOf(".")) .replace(".", File.separator);
+            System.out.println(myCurrentDir);
+            // these 2 work for Eclipse
+//			parser = new JsonFactory().createParser(new File("target\\classes\\moviedata.json"));
+//            parser = new JsonFactory().createParser(new File("src\\main\\resources\\moviedata.json"));
+            // these 2 work for Intellij
+//            parser = new JsonFactory().createParser(new File("D:\\Warehouse\\git_clones\\AWS_demos\\dynamodbdemo1\\src\\main\\resources\\moviedata.json"));
+            parser = new JsonFactory().createParser(new File("D:\\Warehouse\\git_clones\\AWS_demos\\dynamodbdemo1\\target\\classes\\moviedata.json"));
+            rootNode = new ObjectMapper().readTree(parser);
+            Iterator<JsonNode> iter = rootNode.iterator();
+
+            ObjectNode currentNode;
+            int counter = 0;
+            while (iter.hasNext()) {
+                currentNode = (ObjectNode) iter.next();
+
+                // extract the primary key
+                int year = currentNode.path("year").asInt();
+                String title = currentNode.path("title").asText();
+
+                try {
+                	counter++;
+                    table.putItem(new Item().withPrimaryKey("year", year, "title", title).withJSON("info",
+                            currentNode.path("info").toString()));
+                    System.out.println("PutItem succeeded: " + counter + "[" + year + " " + title + "]");
+
+                }
+                catch (Exception e) {
+                    System.err.println("Unable to add movie: " + year + " " + title);
+                    System.err.println(e.getMessage());
+                    break;
+                }
+            }
+            parser.close();
+            System.out.println("Loaded " + counter + " items");
+        } catch (JsonParseException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+
+    }
+    private static void loadTable(DynamoDBMapper dynamoDBMapper) {
+
+        JsonParser parser;
+        JsonNode rootNode;
+        try {
+            String myCurrentDir = System.getProperty("user.dir") + File.separator + System.getProperty("sun.java.command") .substring(0, System.getProperty("sun.java.command").lastIndexOf(".")) .replace(".", File.separator);
+            System.out.println(myCurrentDir);
+            // these 2 work for Eclipse
+//			parser = new JsonFactory().createParser(new File("target\\classes\\moviedata.json"));
+//            parser = new JsonFactory().createParser(new File("src\\main\\resources\\moviedata.json"));
+            // these 2 work for Intellij
+//            parser = new JsonFactory().createParser(new File("D:\\Warehouse\\git_clones\\AWS_demos\\dynamodbdemo1\\src\\main\\resources\\moviedata.json"));
+            parser = new JsonFactory().createParser(new File("D:\\Warehouse\\git_clones\\AWS_demos\\dynamodbdemo1\\target\\classes\\moviedata.json"));
+            rootNode = new ObjectMapper().readTree(parser);
+            Iterator<JsonNode> iter = rootNode.iterator();
+
+            ObjectNode currentNode;
+            MovieRecord movieRec;
+            int counter = 0;
+            while (iter.hasNext()) {
+                currentNode = (ObjectNode) iter.next();
+
+                // extract the primary key
+                int year = currentNode.path("year").asInt();
+                String title = currentNode.path("title").asText();
+
+                movieRec = new MovieRecord(currentNode);
+                try {
+                    counter++;
+                    createRow(dynamoDBMapper, movieRec);
+                    System.out.println("PutItem succeeded: " + counter + "[" + year + " " + title + "]");
+
+                }
+                catch (Exception e) {
+                    System.err.println("Unable to add movie: " + year + " " + title);
+                    System.err.println(e.getMessage());
+                    break;
+                }
+            }
+            parser.close();
+            System.out.println("Loaded " + counter + " items");
+        } catch (JsonParseException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+
+    }
 }
 //Copyright 2012-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 //Licensed under the Apache License, Version 2.0.
