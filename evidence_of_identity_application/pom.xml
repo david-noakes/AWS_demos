@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>au.gov.qld.qgcidm.neo</groupId>
+    <artifactId>EvidenceOfIdentity</artifactId>
+    <version>0.0.0.0001</version>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>au.gov.qld.qgcidm.neo</groupId>
+        <artifactId>qgcidm-neo-parent</artifactId>
+        <version>0.0.0.0001-SNAPSHOT</version>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>au.gov.qld.dsiti</groupId>
+            <artifactId>kms-environment-decryptor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>au.gov.qld.dsiti</groupId>
+            <artifactId>aes-encryption-utils</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-core</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-dynamodb</artifactId>
+		</dependency>
+    </dependencies>
+
+
+</project>
