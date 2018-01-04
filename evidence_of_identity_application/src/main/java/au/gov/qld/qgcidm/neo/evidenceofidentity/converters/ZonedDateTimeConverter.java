@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 
 /**
- * Project cidm_neo_evidenceofidentity_application
+ * Project cidm_neo_evidence_of_identity_application
  * Created on 22 Dec 2017.
  */
 public class ZonedDateTimeConverter  implements DynamoDBTypeConverter<String, ZonedDateTime> {
