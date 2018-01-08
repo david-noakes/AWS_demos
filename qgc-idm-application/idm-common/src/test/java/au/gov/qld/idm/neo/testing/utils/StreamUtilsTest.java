@@ -1,4 +1,4 @@
-package au.gov.qld.idm.neo.utils;
+package au.gov.qld.idm.neo.testing.utils;
 
 import au.gov.qld.idm.neo.TestUtils;
 import org.junit.Test;

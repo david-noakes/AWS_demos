@@ -9,13 +9,14 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>idm-common</module>
+        <module>idm-test-common</module>
         <module>evidence-of-identity</module>
         <module>customer-attributes</module>
     </modules>
     <packaging>pom</packaging>
 
     <properties>
-        <aws.s3.region>ap-southeast-2</aws.s3.region>
+        <aws.s3.region>us-west-2</aws.s3.region>
         <qa.directory>${project.basedir}/qa</qa.directory>
 
         <osssio.encryption.utils.version>1.2</osssio.encryption.utils.version>

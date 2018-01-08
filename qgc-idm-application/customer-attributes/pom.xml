@@ -37,6 +37,13 @@
             <artifactId>idm-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>au.gov.qld.idm.neo</groupId>
+            <artifactId>idm-test-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -69,6 +76,37 @@
                     </delimiters>
                     <useDefaultDelimiters>false</useDefaultDelimiters>
                 </configuration>
+            </plugin>
+            <!--
+                Step 1: Download dynamodb zip file for use with Dynamo integration tests
+            -->
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+            </plugin>
+            <!--
+                Step 2: Reserve a local port for Dynamo to start on.
+            -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+            <!--
+                Step 3: Start DynamoDB_Local just before integration tests are run.
+                  This plugin will also cleanup the process during the
+                  post-integration-test phase.
+            -->
+            <plugin>
+                <groupId>com.bazaarvoice.maven.plugins</groupId>
+                <artifactId>process-exec-maven-plugin</artifactId>
+            </plugin>
+            <!--
+                Step 4: Use the failsafe plugin to run integration tests.
+                  https://maven.apache.org/surefire/maven-failsafe-plugin/
+                -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

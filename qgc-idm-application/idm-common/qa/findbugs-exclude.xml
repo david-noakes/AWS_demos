@@ -24,7 +24,7 @@
     </Match>
 
     <Match>
-        <Class name="au.gov.qld.dsiti.cet.utils.InteractionValidationUtils"/>
+        <Class name="au.gov.qld.dsiti.cet.au.gov.qld.idm.neo.testing.utils.InteractionValidationUtils"/>
         <Method name="validateISOInputDateTimeWithTimeZone"/>
         <Bug pattern="LEST_LOST_EXCEPTION_STACK_TRACE" />
     </Match>

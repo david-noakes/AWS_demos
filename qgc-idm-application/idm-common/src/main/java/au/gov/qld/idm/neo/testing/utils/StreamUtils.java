@@ -1,4 +1,4 @@
-package au.gov.qld.idm.neo.utils;
+package au.gov.qld.idm.neo.testing.utils;
 
 import java.util.Collection;
 import java.util.Optional;

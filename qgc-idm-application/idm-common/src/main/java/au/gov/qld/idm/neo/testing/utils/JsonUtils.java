@@ -1,4 +1,4 @@
-package au.gov.qld.idm.neo.utils;
+package au.gov.qld.idm.neo.testing.utils;
 
 import com.amazonaws.util.StringUtils;
 import com.amazonaws.util.json.Jackson;
