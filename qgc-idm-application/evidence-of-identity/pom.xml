@@ -11,5 +11,23 @@
 
     <artifactId>evidence-of-identity</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>au.gov.qld.idm.neo</groupId>
+            <artifactId>idm-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>au.gov.qld.idm.neo</groupId>
+            <artifactId>idm-test-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-dynamodb</artifactId>
+		</dependency>
+    </dependencies>
 
 </project>
