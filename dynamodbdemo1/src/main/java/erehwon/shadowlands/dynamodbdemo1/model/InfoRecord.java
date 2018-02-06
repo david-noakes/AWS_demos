@@ -15,27 +15,34 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @DynamoDBDocument
 public class InfoRecord {
     private List<String> directors;
-    private String releaseDate;
+    //private String releaseDate;
     private ZonedDateTime releaseDateTime;
-    private BigDecimal rating;
     private List<String> genres;
     private String imageUrl;
     private String plot;
-    private BigDecimal rank;
-    private BigDecimal runningTimeSecs;
+//    private BigDecimal rating;
+//    private BigDecimal rank;
+//    private BigDecimal runningTimeSecs;
+    private Integer rating;
+    private Integer rank;
+    private Integer runningTimeSecs;
     private List<String> actors;
 
     public InfoRecord() {
     	directors = new ArrayList<String>();
 //    	releaseDateTime = ZonedDateTime.now();
-    	releaseDateTime = ZonedDateTime.of(1900, 00,00,00,00,00,00, ZoneId.of("Australia/Brisbane"));
-    	releaseDate = "";
-    	rating = BigDecimal.ZERO;
+//    	releaseDateTime = ZonedDateTime.of(1900, 00,00,00,00,00,00, ZoneId.of("Australia/Brisbane"));
+        releaseDateTime = null;
+    	//releaseDate = "";
+//    	rating = BigDecimal.ZERO;
+        rating = 0;
     	genres = new ArrayList<String>();
     	imageUrl = "";
     	plot = "";
-    	rank = BigDecimal.ZERO;
-    	runningTimeSecs  = BigDecimal.ZERO;
+//    	rank = BigDecimal.ZERO;
+//    	runningTimeSecs  = BigDecimal.ZERO;
+        rank = 0;
+        runningTimeSecs  = 0;
     	actors = new ArrayList<String>();
     }
 
@@ -47,14 +54,15 @@ public class InfoRecord {
         String str[] = std.split(",");
         directors = Arrays.asList(str);
 //    	releaseDateTime = ZonedDateTime.now();
-        releaseDateTime = ZonedDateTime.of(1900, 00,00,00,00,00,00, ZoneId.of("Australia/Brisbane"));
-        releaseDate = infoMap.get("release_date").toString();
-        rating = new BigDecimal(infoMap.get("rating").toString()); //BigDecimal.ZERO;
+        releaseDateTime = null;
+ //       releaseDate = infoMap.get("release_date").toString();
+//        rating = new BigDecimal(infoMap.get("rating").toString()); //BigDecimal.ZERO;
+        rating = Integer.valueOf(infoMap.get("rating").toString()); //BigDecimal.ZERO;
         genres = new ArrayList<String>();
         imageUrl = "";
         plot = "";
-        rank = BigDecimal.ZERO;
-        runningTimeSecs  = BigDecimal.ZERO;
+        rank = 0;
+        runningTimeSecs  = 0;
         actors = new ArrayList<String>();
 
     }
@@ -62,13 +70,16 @@ public class InfoRecord {
     public InfoRecord(ObjectNode jObj) {
         JsonNode jNode;
         ZonedDateTimeConverter zdtc = new ZonedDateTimeConverter();
-        ArrayNode jArray = (ArrayNode) jObj.get("directors");
         String s;
-        String str[];
+
+        ArrayNode jArray = (ArrayNode) jObj.get("directors");
+        directors = new ArrayList();
         if (jArray != null) {
-            s = jArray.toString();
-            str = s.split(",");
-            directors = Arrays.asList(str);
+            Iterator ita = jArray.iterator();
+            while (ita.hasNext()) {
+                s = ita.next().toString();
+                directors.add(s);
+            }
         }
         jNode = jObj.get("release_date");
         if (jNode != null && !jNode.isMissingNode()) {
@@ -79,13 +90,16 @@ public class InfoRecord {
         }
         jNode = jObj.get("rating");
         if (jNode != null) {
-            rating = jNode.decimalValue();
+            rating = Integer.valueOf(jNode.asInt());
         }
         jArray = (ArrayNode) jObj.get("genres");
+        genres = new ArrayList<>();
         if (jArray != null) {
-            s = jArray.toString();
-            str = s.split(",");
-            genres = Arrays.asList(str);
+            Iterator ita = jArray.iterator();
+            while (ita.hasNext()) {
+                s = ita.next().toString();
+                genres.add(s);
+            }
         }
         jNode = jObj.get("image_url");
         if (jNode != null && !jNode.isMissingNode()) {
@@ -97,17 +111,20 @@ public class InfoRecord {
         }
         jNode = jObj.get("rank");
         if (jNode != null) {
-            rank = jNode.decimalValue();
+            rank = Integer.valueOf(jNode.asInt());
         }
         jNode = jObj.get("running_time_secs");
         if (jNode != null) {
-            runningTimeSecs = jNode.decimalValue();
+            runningTimeSecs = Integer.valueOf(jNode.asInt());
         }
         jArray = (ArrayNode) jObj.get("actors");
+        actors = new ArrayList<>();
         if (jArray != null) {
-            s = jArray.toString();
-            str = s.split(",");
-            actors = Arrays.asList(str);
+            Iterator ita = jArray.iterator();
+            while (ita.hasNext()) {
+                s = ita.next().toString();
+                actors.add(s);
+            }
         }
 
     }
@@ -118,52 +135,48 @@ public class InfoRecord {
 		return directors;
 	}
 
-    @DynamoDBAttribute(attributeName = "directors")
-    @JsonProperty("directors")
 	public void setDirectors(List<String> directors) {
 		this.directors = directors;
 	}
 
-    @DynamoDBAttribute(attributeName = "release_date_str")
-    @JsonProperty("release_date")
-	public String getReleaseDate() {
-		return releaseDate;
-	}
-
-    @DynamoDBAttribute(attributeName = "release_date_str")
-    @JsonProperty("release_date")
-	public void setReleaseDate(String releaseDate) {
-		this.releaseDate = releaseDate;
-	}
+//    @DynamoDBAttribute(attributeName = "release_date_str")
+//    @JsonProperty("release_date")
+//	public String getReleaseDate() {
+//		return releaseDate;
+//	}
+//
+//	public void setReleaseDate(String releaseDate) {
+//		this.releaseDate = releaseDate;
+//	}
 
     @DynamoDBTypeConverted(converter = ZonedDateTimeConverter.class)
 	@DynamoDBAttribute(attributeName = "release_date")
-	@JsonProperty("release_date_time")
+	@JsonProperty("release_date")
 	public ZonedDateTime getReleaseDateTime() {
 		if (releaseDateTime != null) {
             return releaseDateTime;
         }
         else {
-		    return ZonedDateTime.of(1900, 00,00,00,00,00,00, ZoneId.of("Australia/Brisbane"));
+		    return null;
         }
 	}
 
-    @DynamoDBTypeConverted(converter = ZonedDateTimeConverter.class)
-	@DynamoDBAttribute(attributeName = "release_date")
-	@JsonProperty("release_date")
 	public void setReleaseDateTime(ZonedDateTime releaseDateTime) {
 		this.releaseDateTime = releaseDateTime;
 	}
 
 	@DynamoDBAttribute(attributeName = "rating")
     @JsonProperty("rating")
-	public BigDecimal getRating() {
-		return rating;
+	public Integer getRating() {
+
+        if (rating != null) {
+            return rating;
+        } else {
+            return Integer.valueOf(-1);
+        }
 	}
 
-    @DynamoDBAttribute(attributeName = "rating")
-    @JsonProperty("rating")
-	public void setRating(BigDecimal rating) {
+	public void setRating(Integer rating) {
 		this.rating = rating;
 	}
 
@@ -173,8 +186,6 @@ public class InfoRecord {
 		return genres;
 	}
 
-    @DynamoDBAttribute(attributeName = "genres")
-    @JsonProperty("genres")
 	public void setGenres(List<String> genres) {
 		this.genres = genres;
 	}
@@ -185,8 +196,6 @@ public class InfoRecord {
 		return imageUrl;
 	}
 
-    @DynamoDBAttribute(attributeName = "image_url")
-    @JsonProperty("image_url")
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
@@ -197,33 +206,35 @@ public class InfoRecord {
 		return plot;
 	}
 
-    @DynamoDBAttribute(attributeName = "plot")
-    @JsonProperty("plot")
 	public void setPlot(String plot) {
 		this.plot = plot;
 	}
 
     @DynamoDBAttribute(attributeName = "rank")
     @JsonProperty("rank")
-	public BigDecimal getRank() {
-		return rank;
+	public Integer getRank() {
+		if (rank != null) {
+		    return rank;
+        } else {
+		    return Integer.valueOf(-1);
+        }
 	}
 
-    @DynamoDBAttribute(attributeName = "rank")
-    @JsonProperty("rank")
-	public void setRank(BigDecimal rank) {
+	public void setRank(Integer rank) {
 		this.rank = rank;
 	}
 
     @DynamoDBAttribute(attributeName = "running_time_secs")
     @JsonProperty("running_time_secs")
-	public BigDecimal getRunningTimeSecs() {
-		return runningTimeSecs;
+	public Integer getRunningTimeSecs() {
+		if (runningTimeSecs != null) {
+		    return runningTimeSecs;
+        } else {
+		    return Integer.valueOf(-1);
+        }
 	}
 
-    @DynamoDBAttribute(attributeName = "running_time_secs")
-    @JsonProperty("running_time_secs")
-	public void setRunningTimeSecs(BigDecimal runningTimeSecs) {
+	public void setRunningTimeSecs(Integer runningTimeSecs) {
 		this.runningTimeSecs = runningTimeSecs;
 	}
 

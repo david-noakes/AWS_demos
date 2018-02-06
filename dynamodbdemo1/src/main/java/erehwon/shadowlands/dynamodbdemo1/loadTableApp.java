@@ -35,7 +35,7 @@ public class loadTableApp {
             JsonNode rootNode;
 			try {
 //				parser = new JsonFactory().createParser(new File("..\\..\\..\\..\\resources\\moviedata.json"));
-				parser = new JsonFactory().createParser(new File("D:\\Warehouse\\Workspaces\\Eclipse\\AWSDemo1\\dynamodbdemo1\\src\\main\\resources\\\\moviedata.json"));
+				parser = new JsonFactory().createParser(new File("D:\\Warehouse\\git_clones\\AWS_Demos\\dynamodbdemo1\\src\\main\\resources\\moviedata.json"));
 	            rootNode = new ObjectMapper().readTree(parser);
 	            Iterator<JsonNode> iter = rootNode.iterator();
 

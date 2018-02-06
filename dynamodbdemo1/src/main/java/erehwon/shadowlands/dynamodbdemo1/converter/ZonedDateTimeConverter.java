@@ -10,11 +10,19 @@ public class ZonedDateTimeConverter implements DynamoDBTypeConverter<String, Zon
 
     @Override
     public String convert(ZonedDateTime dateTime) {
-        return dateTime.format(DATE_FORMATTER);
+        if (dateTime != null) {
+            return dateTime.format(DATE_FORMATTER);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public ZonedDateTime unconvert(String dateTimeString) {
-        return ZonedDateTime.parse(dateTimeString, DATE_FORMATTER);
+        if (dateTimeString != null) {
+            return ZonedDateTime.parse(dateTimeString, DATE_FORMATTER);
+        } else {
+            return null;
+        }
     }
 }

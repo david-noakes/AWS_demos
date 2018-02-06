@@ -47,8 +47,6 @@ public class MovieRecord {
         return year;
     }
 
-    @DynamoDBHashKey(attributeName = "year")
-    @JsonProperty("year")
     public void setYear(Integer year) {
         this.year = year;
     }
@@ -59,8 +57,6 @@ public class MovieRecord {
         return title;
     }
 
-    @DynamoDBRangeKey (attributeName = "title")
-    @JsonProperty("title")
     public void setTitle(String title) {
         this.title = title;
     }
@@ -71,8 +67,6 @@ public class MovieRecord {
         return info;
     }
 
-    @DynamoDBAttribute(attributeName = "info")
-    @JsonProperty("info")
     public void setInfo(InfoRecord info) {
         this.info = info;
     }

@@ -347,7 +347,7 @@ public class CreateTableApp {
 //            parser = new JsonFactory().createParser(new File("src\\main\\resources\\moviedata.json"));
             // these 2 work for Intellij
 //            parser = new JsonFactory().createParser(new File("D:\\Warehouse\\git_clones\\AWS_demos\\dynamodbdemo1\\src\\main\\resources\\moviedata.json"));
-            parser = new JsonFactory().createParser(new File("D:\\Warehouse\\git_clones\\AWS_demos\\dynamodbdemo1\\target\\classes\\moviedata.json"));
+            parser = new JsonFactory().createParser(new File("D:\\Warehouse\\git_clones\\AWS_demos\\dynamodbdemo1\\src\\main\\resources\\moviedata.json"));
             rootNode = new ObjectMapper().readTree(parser);
             Iterator<JsonNode> iter = rootNode.iterator();
 
