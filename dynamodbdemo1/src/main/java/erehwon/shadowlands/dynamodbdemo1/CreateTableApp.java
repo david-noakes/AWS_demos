@@ -1,4 +1,5 @@
 package erehwon.shadowlands.dynamodbdemo1;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import erehwon.shadowlands.dynamodbdemo1.model.*;
-
+import erehwon.shadowlands.dynamodbdemo1.utils.JsonUtils;
 
 public class CreateTableApp {
 
@@ -361,7 +362,8 @@ public class CreateTableApp {
                 int year = currentNode.path("year").asInt();
                 String title = currentNode.path("title").asText();
 
-                movieRec = new MovieRecord(currentNode);
+//                movieRec = new MovieRecord(currentNode);
+                movieRec = JsonUtils.INSTANCE.fromJsonString(currentNode.toString(), MovieRecord.class);
                 try {
                     counter++;
                     createRow(dynamoDBMapper, movieRec);

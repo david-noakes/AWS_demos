@@ -87,13 +87,13 @@ public class MovieDBVerificationIT {
         try {
             parser = new JsonFactory().createParser(THOR_DARK_WORLD);
             ObjectNode jObjectNode = new ObjectMapper().readTree(parser);
-            vg = new MovieRecord(jObjectNode);
+//            vg = new MovieRecord(jObjectNode);
+            vg = JsonUtils.INSTANCE.fromJsonString(THOR_DARK_WORLD, MovieRecord.class);
 
         } catch (Exception e) {
             System.err.println("Unable to create verificationGroup " );
             System.err.println(e.getMessage());
         }
-//        vg = JsonUtils.INSTANCE.fromJsonString(THOR_DARK_WORLD, MovieRecord.class);
         try {
             createRow(getDynamoDBMapper(), vg);
         } catch (Exception e) {
@@ -110,9 +110,9 @@ public class MovieDBVerificationIT {
         assertThat(vg1.getInfo().getActors().size(), equalTo(3));
 
         InfoRecord underTest = (InfoRecord) vg1.getInfo();
-        assertThat(underTest.getActors().get(2), equalTo("\"Tom Hiddleston\""));
-        assertThat(underTest.getDirectors().get(0), equalTo("\"Alan Taylor\""));
-        assertThat(underTest.getGenres().get(2), equalTo("\"Fantasy\""));
+        assertThat(underTest.getActors().get(2), equalTo("Tom Hiddleston"));
+        assertThat(underTest.getDirectors().get(0), equalTo("Alan Taylor"));
+        assertThat(underTest.getGenres().get(2), equalTo("Fantasy"));
         assertThat(underTest.getRank(), equalTo(5));
         assertThat(underTest.getReleaseDateTime().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
                 equalTo(ZonedDateTime.parse("2013-10-30T00:00:00Z").format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)));
