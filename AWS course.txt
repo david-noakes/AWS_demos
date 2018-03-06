@@ -1,0 +1,61 @@
+Amazon Route 53
+1. setting up a domain in route53
+   * DNS ROUTE53 DNS name to route to EC2 elastic Load Balancer
+   - management console -> EC2 -> scroll down to Load balancer
+   - create load balancer -> enter details
+     - select at least 2 subnets in different AZs
+	 - assign security groups
+	 - configure health check (port 80, default page) configure failure count
+	 - add EC2 instances
+	 - create
+   - Route53  (need a registered domain name)
+     - create(purchase) or select existing
+	 - if not purchased from amazon, define NS (name servers).
+	 - if purchased, select (copy and paste) the amazon ones
+	
+2. configuring your Failwhale
+   * configuring failover when the health check fails to a secondary address	
+   - create health check
+     - dashboard -> health checks
+	   - create, name , monitor endpoint, protocol http
+	   - create 2 record sets, one for primary, one for failover 
+	     - hosted zones -> select -> create record set
+		   - IP address, routing policy = failover, type = primary, associate with health check
+		   - its type = A 
+		 - create record set (2nd)
+           - same subdomain name, 	Alias radio button, target = secondary IP, failover, type = secondary
+           - not associated with health check		
+
+3. Latency based routing
+   * distributes traffic based on latency (tries to route for lowest latency ie closest)	   
+   - hosted zones -> select
+     - create record set, select endpoint ip, alias = No, type = A, routing policy = Latency (requires region) health check not required
+	 - create record set, type = A, alias = No, use different IP address, use a different region
+   - when someone accesses this website, now they will be routed to whichever IP is closest (lowest latency) to them.	 
+   
+4. Weighted round robin routing
+   * 
+   - hosted zones -> select domain 
+     - create record set. select subdomain, type = A, select endpoint, routing policy = weighted, weight = eg 100
+	 - create record set. same subdomain, type = A, select different endpoint, routing policy = weighted = eg 0
+	 - the 100/0 split ensures only routed to first not second. can slowly change ration to route traffic to second 
+	 
+5. Amazon WorkMail
+   * low cost email system (not available everywhere)
+   - create organisation
+     - creates email domain with encrypted mailboxes
+   - add domain
+     - allows different email addresses across the domains
+	 - set up Domain Keys Identified Mail - DKIM - signing
+	 - switch the MX records and Autodiscover DNS records when mailbox migration is complete
+	   - easiest to do in small groups eg 25
+     - verified domain ownership -> create or select TXT record (_amazonses.<domain>
+	 - verify TXT
+	 - create MX record and CNAME records (canonical names eg  cname: ftp.example.com and www.example.com both point to example.com
+	                                       A record points example.com to the IP address)
+   - create users, groups and resources
+     - workmail -> select organisation -> create users
+	 - create users
+	 
+	 
+	 
