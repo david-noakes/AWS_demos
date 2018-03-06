@@ -101,4 +101,93 @@ Amazon IoT
    * states what happens when message is received.
      eg SELECT * FROM 'test/chap1'  -> SNS Action, Lambda Action
 	 - SNS target needs to be defined first
+
+
+Amazon messaging Services
+=========================
+1. SNS - Simple Notification Service
+   * publishers and subscribers
+   * topics   
+   - create new topic (name, description)
+   - create subscription to topic (topic, protocol, endpoint( where to send notifications)
+   - confirm subscription
+   - edit topic policy publish users, subscribe users
+   - publish a message
+   - subscriptions can be deleted, topics can be deleted
    
+2. SQS - Simple Queue Service
+   * messages wait in queues until they have been processed. (max 256k)
+   * supports multiple readers and writers
+   * when consumer pools for message, the message is hidden from the consumers, and a timer starts
+     - if the message is processed and deleted before the timer finishes, all is good
+	 - if the timeout elapses, the message is restored to visibility, and can be consumed.
+   - create new queue => SQS -> create new queue
+   - view queue - details, permissions ,actions {send message, purge queue, delete queue, configure}
+   
+3. SWS - Simple Workflow Service
+   * node.js example
+   
+
+Deployment on Amazon
+====================
+* docker  www.docker.com
+  - replaces the hypervisor, does away with the need for guest OS
+  - container has much smaller footprint, starts much faster
+  - built on node.js
+  - Dockerfile defines the wrapper around the node.js app
+      example   FROM node:1.23
+	            WORKDIR /app
+				ADD . /app
+				RUN npm install
+				EXPOSE 3000
+				CMD node index.js
+   - docker commands (examples only)
+     >docker image   // lists the generated images
+	 >docker ps      // which containers are currently running
+	 >docker ps -a   // list contains available to run
+	 >docker start <container id>
+	 
+* docker hub - repository in cloud hosted by Docker where you can push and pull images
+
+* kitematic - useful for interacting with docker instances
+
+* docker installation and setup
+  - install from www.docker.com
+    - select platform -> download
+	- execute to install
+	** Docker uses VirtualBox under the hood and is not compatible with Hyper-V
+
+* docker commands:
+  >docker build -t {name}:{tag} .  // runs the docker file, then creates an image (snapshot)
+  >docker run -it {image_id} {command to run}  // i- = interactive -t = use terminal cmd eg /bin/bash
+  >docker help
+  >docker stop
+  +exit    // when in the bash shell on the instance
+  >docker rm {continer_id}   // removes the container (as shown in docker ps or ps -a
+  >docker rmi {image_id}    // from docker image
+  
+  
+* Creating a CloudFormation stack
+  - create cloudformation stack (enter a admin passwork, enter keypair, modify the StreamName
+  - options tags, notifications (with confirmation)
+  
+* running the Cloudformation stack  
+  - click on AMS server key to check it is running
+  - connect the instance to the streaming encoder such as flash, adobe media server
+  
+* cloud formation  => outputs, resources, events, templates (JSOPN format), parameters, tags, stack policy, change sets
+  - resources can be EC2 or other Amazon
+  - cloud formation templates are available from Amazon under documentation
+  
+* Elastic beanstalk
+  - create environment (Web Server Environment | Worker Environment (queue processing)}
+    - options for language
+	- option for load balance
+	- option to use sample or upload 
+	- can create RDS database and associate with environment (if you kill the environment, you will kill this associated DB, 
+	   Solution: do it later)
+  - create new application
+  
+* Amazon Shared Security Responsibility Model
+  * security best practices available from amazonwebservices.com
+    - AWS is responsible fore the infrastructure security, you are responsible for the application layer
