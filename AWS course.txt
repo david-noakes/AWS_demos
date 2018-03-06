@@ -1,4 +1,5 @@
 Amazon Route 53
+===============
 1. setting up a domain in route53
    * DNS ROUTE53 DNS name to route to EC2 elastic Load Balancer
    - management console -> EC2 -> scroll down to Load balancer
@@ -58,4 +59,46 @@ Amazon Route 53
 	 - create users
 	 
 	 
-	 
+Amazon IoT
+==========
+1. Device registry and Shadows	 
+   * choose a thing name that is consistent with the client id used by MQTT communications
+   - AWS IoT -> connect to AWS IoT 
+   - create resource  (things, rules, thing types, certificates, policies
+   - thing shadow maintains the current state of the device
+     - JSON - desired state, last reported state.
+	   - compute a delta to send to device to achieve the desired state
+
+2. Things and certificates
+   - create a thing	   (name, attributes
+   - view a thing  (view/update shadow)
+   - create certificate -> generate public and private keys
+     - must copy the VeriSigns roots CA certificate onto your device (proof of identity)
+	   - documentation AWS IoT::Security and Identity::Authentication in AWS IoT
+	   - click the link 'copy the {VeriSign root CA certificate} onto your device'
+	   - optional ** change the name to root-CA.crt
+   - associate the certificate with your thing
+     - select certificate
+	 - attach to thing (select thing)
+   - create a policy to give that thing permission to do stuff
+     - create (name, action {iot.*} allow resource {*}
+	 - add statement
+	 - create
+   - attach to certificate
+
+3. Topics and Messages
+   * configure an MQTT client to test out this communication flow
+   - MQTT.fx connection properties
+     - broker address: AWS IoT  '?' over to the right -> scroll to bottom -> copy "endpoint"
+     - create your profile (name, broker address from above, port {default:8883}
+	   - client id displayed is unique identifier for your client (must be unique to that client)
+	   - enable SSL/TLS, enter certificate details and public key file, tick PEM format
+	   - MQTT can query the thing and display the response
+	   - suscribe the MQTT client in AWS IoT to the topic the thing returns
+	   - MQTT service publish to client, MQTT client will show the message received by the thing
+
+4. AWS IoT Rules Engine
+   * states what happens when message is received.
+     eg SELECT * FROM 'test/chap1'  -> SNS Action, Lambda Action
+	 - SNS target needs to be defined first
+   
